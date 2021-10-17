@@ -1,0 +1,33 @@
+import cv2 as cv
+import numpy as np
+from PIL import ImageGrab
+import win32gui
+from time import time
+
+
+#   if cv.waitKey(1) == ord('q'):
+#       cv.destroyAllWindows()
+#        break
+
+resim = cv.imread('ekranpenceresi.jpg')
+resim_gri = cv.cvtColor(resim,cv.COLOR_BGR2GRAY)
+
+nesne1 = cv.imread('nesne1.jpg')
+nesne1_gri = cv.cvtColor(nesne1,cv.COLOR_BGR2GRAY)
+
+w,h = nesne1_gri.shape[::-1]
+print(w,h)
+
+#TM_CCOEFF_NORMED
+res = cv.matchTemplate(resim_gri,nesne1_gri,cv.TM_CCOEFF_NORMED)
+threshold = 0.8
+
+location = np.where(res>threshold)
+
+for n in zip(*location[::-1]):
+    cv.rectangle(resim,n,(n[0]+w,n[1]+h),(0,255,255),1)
+cv.imshow("bulunan nesneler",resim)
+cv.imshow("resim_gri",resim_gri)
+cv.imshow("nesne_gri",nesne1_gri)
+cv.waitKey(0)
+cv.destroyWindow()
